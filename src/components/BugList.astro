@@ -1,20 +1,35 @@
 ---
-import bugList from '../../bug_buckets/bug_buckets.json';
+import bugList from '@/assets/bug_buckets/bug_buckets.json';
 import Bug from './Bug.astro';
-import { type RESTlerBug } from '../types/types';
+import { type RESTlerBug } from '@/types/types';
+import fs from 'fs';
+import path from 'path';
 
 // Load all bug data
 const bugs: RESTlerBug[] = [];
 
 for (const [bugId, bugInfo] of Object.entries(bugList)) {
-    const filePath = `../../bug_buckets/${bugInfo.file_path.replace('.replay.txt', '.json')}`;
+    // Convert replay file path to corresponding JSON file name
+    // e.g., "PayloadBodyChecker_500_1.replay.txt" -> "PayloadBodyChecker_500_1.json"
+    const jsonFileName = bugInfo.file_path.replace('.replay.txt', '.json');
+    
+    // Build absolute path from current directory (src/components for dev mode, dist for production) to the JSON file in the bug_buckets directory
+    const filePath = path.join(process.cwd(), 'src/assets/bug_buckets', jsonFileName);
+    
     try {
-        const bugData = await import(filePath);
-        bugs.push({ ...bugData.default, bug_id: bugId });
+        if (fs.existsSync(filePath)) {
+            const fileContent = fs.readFileSync(filePath, 'utf-8');
+            const bugData = JSON.parse(fileContent);
+            bugs.push({ ...bugData, bug_id: bugId });
+        } else {
+            console.warn(`Bug data file not found: ${jsonFileName}`);
+        }
     } catch (error) {
         console.error(`Failed to load bug data for ${bugId}:`, error);
     }
 }
+
+console.log(`Successfully loaded ${bugs.length} bugs`);
 ---
 
 <div class="bug-list">
