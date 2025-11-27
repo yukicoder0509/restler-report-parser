@@ -1,0 +1,48 @@
+---
+import bugList from '../../bug_buckets/bug_buckets.json';
+import Bug from './Bug.astro';
+import { type RESTlerBug } from '../types/types';
+
+// Load all bug data
+const bugs: RESTlerBug[] = [];
+
+for (const [bugId, bugInfo] of Object.entries(bugList)) {
+    const filePath = `../../bug_buckets/${bugInfo.file_path.replace('.replay.txt', '.json')}`;
+    try {
+        const bugData = await import(filePath);
+        bugs.push({ ...bugData.default, bug_id: bugId });
+    } catch (error) {
+        console.error(`Failed to load bug data for ${bugId}:`, error);
+    }
+}
+---
+
+<div class="bug-list">
+    <h2>RESTler Bug Report ({bugs.length} bugs found)</h2>
+    <div class="bugs-container">
+        {bugs.map((bug) => (
+            <Bug bug={bug} />
+        ))}
+    </div>
+</div>
+
+<style>
+    .bug-list {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .bugs-container {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    }
+    
+    h2 {
+        color: #333;
+        border-bottom: 2px solid #007acc;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+</style>

@@ -1,0 +1,134 @@
+---
+import {type RESTlerBug} from '../types/types';
+
+type Props = {
+    bug: RESTlerBug;
+};
+
+const { bug } = Astro.props;
+
+const prettyHTTPString = (raw: string) => {
+    if (!raw) return '';
+
+  const jsonStart = raw.indexOf('{');
+  if (jsonStart === -1) {
+    return raw;
+  }
+
+  const head = raw.slice(0, jsonStart).trim();
+  const jsonPart = raw.slice(jsonStart);
+
+  try {
+    const parsed = JSON.parse(jsonPart);
+    const prettyJson = JSON.stringify(parsed, null, 2);
+
+    return `${head}\n\n${prettyJson}`;
+  } catch (e) {
+    return raw;
+  }
+};
+
+// console.log('Rendering bug:', bug.request_sequence[0].replay_request);
+---
+
+<div class="bug-card">
+    <h3>Bug: {bug.bug_id || 'Unknown ID'}</h3>
+    <p><strong>Endpoint:</strong> {bug.verb} {bug.endpoint}</p>
+    <p><strong>Status:</strong> {bug.status_code} {bug.status_text}</p>
+    <p><strong>Checker:</strong> {bug.checker_name}</p>
+    <p><strong>Reproducible:</strong> {bug.reproducible ? 'Yes' : 'No'}</p>
+    
+    {bug.request_sequence && bug.request_sequence.length > 0 && (
+        <details>
+            <summary><strong>Request/Response Details ({bug.request_sequence.length} steps)</strong></summary>
+            <div class="request-sequence">
+                {bug.request_sequence.map((step, index) => (
+                    <div class="step">
+                        <h4>Step {index + 1}</h4>
+                        <div class="request">
+                            <strong>Request:</strong>
+                            <pre>{prettyHTTPString(step.replay_request)}</pre>
+                        </div>
+                        <div class="response">
+                            <strong>Response:</strong>
+                            <pre>{prettyHTTPString(step.response)}</pre>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </details>
+    )}
+</div>
+
+<style>
+    .bug-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+        background: #f9f9f9;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .bug-card h3 {
+        margin-top: 0;
+        color: #d73a49;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+        word-break: break-all;
+        overflow-wrap: break-word;
+    }
+    
+    .bug-card p {
+        margin: 8px 0;
+    }
+    
+    details {
+        margin-top: 16px;
+    }
+    
+    summary {
+        cursor: pointer;
+        font-weight: bold;
+        padding: 8px;
+        background: #e6f3ff;
+        border-radius: 4px;
+        border: 1px solid #b3d9ff;
+    }
+    
+    summary:hover {
+        background: #ccebff;
+    }
+    
+    .request-sequence {
+        margin-top: 12px;
+    }
+    
+    .step {
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin: 12px 0;
+        padding: 12px;
+        background: white;
+    }
+    
+    .step h4 {
+        margin: 0 0 8px 0;
+        color: #007acc;
+    }
+    
+    .request, .response {
+        margin: 8px 0;
+    }
+    
+    pre {
+        background: #f6f8fa;
+        border: 1px solid #e1e4e8;
+        border-radius: 3px;
+        padding: 8px;
+        font-size: 12px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+</style>
