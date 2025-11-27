@@ -41,6 +41,8 @@ May also reference `compose.yaml` for usage example:
 └── parser_output/
 ```
 
+`compose.yaml`
+
 ```yaml
 name: restler-report-parser
 services:
