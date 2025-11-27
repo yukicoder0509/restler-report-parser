@@ -21,8 +21,12 @@ pnpm preview
 
 ### From docker file
 
+Image: `yukicoder/restler-report-parser:latest`
+
 Mount the folder inlcude bug buckets files to `/app/src/assets/bug_buckets`.
 
 Mount the folder you want to place the output report to `/app/dist`
 
 Run the docker container and the static HTML report will be generated.
+
+May also reference `compose.yaml` for usage example.
