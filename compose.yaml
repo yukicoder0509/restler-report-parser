@@ -1,7 +1,7 @@
 name: restler-report-parser
 services:
   restler-report-parser:
-    build: .
+    image: yukicoder/restler-report-parser:latest
     ports:
       - "4321:4321"
     volumes:

@@ -13,7 +13,7 @@ pnpm install
 pnpm build
 ```
 
-You will find an `index.html` in folder `dist`. It can be served by pnpm.
+You will find an `index.html` in folder `dist`. It can be served by pnpm on port `4321`.
 
 ```
 pnpm preview
@@ -23,10 +23,32 @@ pnpm preview
 
 Image: `yukicoder/restler-report-parser:latest`
 
-Mount the folder inlcude bug buckets files to `/app/src/assets/bug_buckets`.
+1. Mount the folder inlcude bug buckets files to `/app/src/assets/bug_buckets`.
 
-Mount the folder you want to place the output report to `/app/dist`
+2. Mount the folder you want to place the output report to `/app/dist`
 
-Run the docker container and the static HTML report will be generated.
+3. Run the docker container and the static HTML report will be generated. The report will be serve as a static website on port `4321`.
 
-May also reference `compose.yaml` for usage example.
+May also reference `compose.yaml` for usage example:
+
+```
+.
+├── compose.yaml
+├── bug_buckets/
+│   ├── bug_buckets.json
+│   ├── InvalidValueChecker_500_1.json
+│   └── InvalidValueChecker_500_2.json
+└── parser_output/
+```
+
+```yaml
+name: restler-report-parser
+services:
+  restler-report-parser:
+    image: yukicoder/restler-report-parser:latest
+    ports:
+      - "4321:4321"
+    volumes:
+      - "./bug_buckets:/app/src/assets/bug_buckets"
+      - "./parser_output:/app/dist"
+```
