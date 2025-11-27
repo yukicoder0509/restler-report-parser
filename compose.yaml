@@ -1,0 +1,9 @@
+name: restler-report-parser
+services:
+  restler-report-parser:
+    build: .
+    ports:
+      - "4321:4321"
+    volumes:
+      - "./bug_buckets:/app/src/assets/bug_buckets"
+      - "./parser_output:/app/dist"
