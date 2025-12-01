@@ -21,7 +21,7 @@ pnpm preview
 
 ### From docker file
 
-Image: `yukicoder/restler-report-parser:latest`
+Image: `yukicoder/restler-report-parser:latest` | [DockerHub](https://hub.docker.com/r/yukicoder/restler-report-parser)
 
 1. Mount the folder inlcude bug buckets files to `/app/src/assets/bug_buckets`.
 
