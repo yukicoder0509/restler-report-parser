@@ -27,7 +27,7 @@ Image: `yukicoder/restler-report-parser:latest`
 
 2. Mount the folder you want to place the output report to `/app/dist`
 
-3. Run the docker container and the static HTML report will be generated. The report will be serve as a static website on port `4321`.
+3. Run the docker container and the static HTML report will be generated.
 
 May also reference `compose.yaml` for usage example:
 
@@ -48,8 +48,6 @@ name: restler-report-parser
 services:
   restler-report-parser:
     image: yukicoder/restler-report-parser:latest
-    ports:
-      - "4321:4321"
     volumes:
       - "./bug_buckets:/app/src/assets/bug_buckets"
       - "./parser_output:/app/dist"
